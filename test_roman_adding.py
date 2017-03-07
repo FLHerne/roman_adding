@@ -41,6 +41,7 @@ class TestRomanAdding(unittest.TestCase):
         self.assertEqual(add('III', 'I'), 'IV')
 
 
+import random
 class TestRomanAddingSubTests(unittest.TestCase):
     """Test adding roman numbers.
 
@@ -51,12 +52,13 @@ class TestRomanAddingSubTests(unittest.TestCase):
 
     def test_adding(self):
 
-        for a in [1, 2]:
-            for b in [1, 2]:
-                ar = to_roman(a)
-                br = to_roman(b)
-                with self.subTest(ar=ar, br=br):
-                    self.assertEqual(add(ar, br), to_roman(a+b))
+        for _ in range(1000):
+            a = random.randint(1, 1500)
+            b = random.randint(1, 1500)
+            ar = to_roman(a)
+            br = to_roman(b)
+            with self.subTest(ar=ar, br=br):
+                self.assertEqual(add(ar, br), to_roman(a+b))
 
 
 if __name__ == '__main__':

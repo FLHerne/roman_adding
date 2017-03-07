@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+import re
+
 """Support for adding two roman numbers.
 
 The idea is to write a function, add, that takes two strings as arguments,
@@ -15,7 +17,7 @@ https://en.wikipedia.org/wiki/Roman_numerals):
   inputs *or outputs* above that amount) - although it's OK if they do work.
 * Generally, numbers are formed by adding adjacent values - so
 
-  * CCVII is 100 + 100 + 5 + 1 + 1 which is 207, and
+  * CCIVII is 100 + 100 + 5 + 1 + 1 which is 207, and
   * MLXVI is 1000 + 50 + 10 + 1, which is 1066,
 
 * In special cases, four repeating characters are instead always replaced by 
@@ -67,10 +69,37 @@ def add(number1, number2):
 
     sum = number1 + number2
 
-    if sum == 'IIII':
-        sum = 'IV'
+    subtractive_map = (
+        ('IV', 'I' * 4),
+        ('IX', 'I' * 9),
+        ('XL', 'X' * 4),
+        ('XC', 'X' * 9),
+        ('CD', 'C' * 4),
+        ('CM', 'C' * 9)
+    )
 
-    return sum
+    illegal_subtractions = (
+        ('VIV', 'IX'),
+        ('LXL', 'XC'),
+        ('DCD', 'CM')
+    )
+
+    for x_in, out in subtractive_map:
+        number1 = number1.replace(x_in, out)
+        number2 = number2.replace(x_in, out)
+    number = number1 + number2
+    number = ''.join(sorted(number, key=lambda c: -ROMAN_DIGITS.index(c)))
+
+    for big, small, n in zip(ROMAN_DIGITS[1:], ROMAN_DIGITS[:-1], (5, 2) * 4):
+        number = number.replace(small * n, big)
+
+    for out, x_in in subtractive_map:
+        number = number.replace(x_in, out)
+
+    for x_in, out in illegal_subtractions:
+        number = number.replace(x_in, out)
+
+    return number
 
 
 def main(args):
